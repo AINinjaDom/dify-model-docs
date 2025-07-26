@@ -256,6 +256,8 @@ Custom components (`flux.1-dev`, `whisper-base`, `piper-tts`) are not in Ollama 
 - **Size**: ~12 GB
 - **Install Dependencies**:
   ```bash
+  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  python3 get-pip.py
   pip install torch torchvision torchaudio diffusers transformers accelerate fastapi uvicorn
   ```
 - **Setup Script**:
