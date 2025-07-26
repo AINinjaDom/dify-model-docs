@@ -1,544 +1,549 @@
-# Dify Installation and Setup Documentation
+# Model Documentation for Multi-Agent System on Mac Mini M4 Pro
 
----
+This document details the specifications, strengths, and use cases for AI models integrated with Ollama and Dify on a Mac Mini M4 Pro (14-core CPU, up to 20-core GPU, 16GB+ RAM, macOS Sequoia, as of July 27, 2025, 01:13 AM HKT). The models power a modern, capable, and fun multi-agent system for reasoning, vision, image generation, coding, search, speech-to-text, text-to-speech, and conversational tasks (including potential Cantonese support). It includes setup for external access via Ngrok and is designed for Dify’s Knowledge Base.
 
-This document provides comprehensive instructions for installing and configuring **Dify**, **Ngrok**, **Ollama models**, and custom components (e.g., `flux.1-dev`, `whisper-base`, `piper-tts`) on a **Mac Mini M4 Pro** running **macOS Sequoia**. Tailored for a **multi-agent system**, it supports models like `llava:latest`, `gemma2:latest`, `nomic-embed-text:latest`, `llama3.2:latest`, `qwen2.5:14b`, `mistral:7b`, `phi3:3.8b`, `bge-small-en-v1.5`, `bakllava`, `codellama:7b`, `borch/llama3_speed_chat`, and `wangshenzhi/llama3-8b-chinese-chat`. It covers **installation**, **setup**, **running**, **troubleshooting**, and **organization** for easy reference in Dify’s Knowledge Base or a Git repository.
+## Hardware and Software Context
+- **Mac Mini M4 Pro**: 14-core CPU, 20-core GPU, 16-core Neural Engine (38 TOPS), 16GB+ RAM, ~500GB+ storage.
+- **Ollama**: Runs at `http://host.docker.internal:11434`. Models: `llava:latest`, `gemma2:latest`, `nomic-embed-text:latest`, `llama3.2:latest`, `qwen2.5:14b`, `mistral:7b`, `phi3:3.8b`, `bge-small-en-v1.5`, `bakllava`, `codellama:7b`, `borch/llama3_speed_chat`, `wangshenzhi/llama3-8b-chinese-chat`.
+- **Dify**: Docker-based, accessible locally at `http://192.168.50.122:3000`. Supports multi-agent workflows.
+- **External Access**: Configured for phone access via Ngrok (`https://<ngrok-url>/apps`), Wi-Fi (`http://192.168.50.122:3000/apps`), or VPN.
 
----
+## Models and Specifications
 
-## Table of Contents
+### 1. llava:latest
+- **Type**: LLM with Vision
+- **Size**: ~4.7 GB
+- **Recommended Specs**: 8GB RAM, M4 Pro GPU, 5GB storage, 4096-token context, 4096 max tokens.
+- **Strengths**: Multimodal text and image processing, excels in image description and visual Q&A.
+- **Use Cases**: Visual Analyst Agent (e.g., “Describe this photo”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `llava:latest`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 4096
+  - Upper Bound for Max Tokens: 4096
+  - Vision Support: Yes
+  - Function Call Support: No
 
-- [Prerequisites](#prerequisites)
-- [1. Installing Dify](#1-installing-dify)
-  - [Steps](#steps-for-dify)
-  - [Troubleshooting](#troubleshooting-dify)
-- [2. Installing and Setting Up Ngrok](#2-installing-and-setting-up-ngrok)
-  - [Steps](#steps-for-ngrok)
-  - [Troubleshooting](#troubleshooting-ngrok)
-- [3. Installing and Setting Up Ollama Models](#3-installing-and-setting-up-ollama-models)
-  - [Ollama Installation](#ollama-installation)
-  - [Model Details](#model-details)
-- [4. Installing and Setting Up Custom Components](#4-installing-and-setting-up-custom-components)
-  - [flux.1-dev (Text-to-Image)](#flux1-dev-text-to-image)
-  - [whisper-base (Speech-to-Text)](#whisper-base-speech-to-text)
-  - [piper-tts (Text-to-Speech)](#piper-tts-text-to-speech)
-- [5. Running All Components](#5-running-all-components)
-- [6. Organizing Documentation](#6-organizing-documentation)
-- [7. Testing and Validation](#7-testing-and-validation)
-- [8. Troubleshooting](#8-troubleshooting)
+### 2. gemma2:latest
+- **Type**: LLM
+- **Size**: ~5.4 GB
+- **Recommended Specs**: 8GB RAM, M4 Pro GPU, 6GB storage, 8192-token context, 4096 max tokens.
+- **Strengths**: High-quality text generation for conversations and reasoning.
+- **Use Cases**: Narrative Agent (e.g., “Write a sci-fi story”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `gemma2:latest`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 8192
+  - Upper Bound for Max Tokens: 4096
+  - Vision Support: No
+  - Function Call Support: No
 
----
+### 3. nomic-embed-text:latest
+- **Type**: Text Embedding
+- **Size**: ~274 MB
+- **Recommended Specs**: 4GB RAM, CPU, 300MB storage, 8192-token context.
+- **Strengths**: Lightweight, high-quality embeddings for search and RAG.
+- **Use Cases**: Search Agent (e.g., “Find AI papers”).
+- **Dify Settings**:
+  - Model Type: Text Embedding
+  - Model Name: `nomic-embed-text:latest`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Not applicable
+  - Model Context Size: 8192
+  - Upper Bound for Max Tokens: Not applicable
+  - Vision Support: No
+  - Function Call Support: No
 
-## Prerequisites
+### 4. llama3.2:latest
+- **Type**: LLM
+- **Size**: ~2.0 GB
+- **Recommended Specs**: 4GB RAM, M4 Pro GPU, 2.5GB storage, 4096-token context, 4096 max tokens.
+- **Strengths**: Lightweight, fast, supports function calling.
+- **Use Cases**: Tool Agent (e.g., “Fetch weather data”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `llama3.2:latest`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 4096
+  - Upper Bound for Max Tokens: 4096
+  - Vision Support: No
+  - Function Call Support: Yes
 
-Before starting, ensure the following are met:
+### 5. qwen2.5:14b
+- **Type**: LLM
+- **Size**: ~9.0 GB
+- **Recommended Specs**: 16GB RAM, M4 Pro GPU, 10GB storage, 32768-token context, 4096 max tokens.
+- **Strengths**: Advanced reasoning, large context, function calling.
+- **Use Cases**: Reasoner Agent (e.g., “Plan a complex project”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `qwen2.5:14b`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 32768
+  - Upper Bound for Max Tokens: 4096
+  - Vision Support: No
+  - Function Call Support: Yes
 
-| Requirement            | Details                                                                 |
-|-----------------------|-------------------------------------------------------------------------|
-| **Mac Mini M4 Pro**   | 16GB+ RAM, macOS Sequoia, ~50GB free storage.                          |
-| **Homebrew**          | Install: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
-| **Git**               | Install: `brew install git`                                            |
-| **Python 3.10+**      | Install: `brew install python`                                         |
-| **Docker Desktop**    | Download from [docker.com](https://www.docker.com/products/docker-desktop/) and install. Ensure running. |
-| **Ngrok Account**     | Sign up at [ngrok.com](https://ngrok.com) for an authtoken.            |
-| **Internet Connection** | Required for downloads.                                               |
+### 6. mistral:7b
+- **Type**: LLM
+- **Size**: ~4.1 GB
+- **Recommended Specs**: 8GB RAM, M4 Pro GPU, 5GB storage, 8192-token context, 4096 max tokens.
+- **Strengths**: Efficient reasoning and chat, fast.
+- **Use Cases**: Planner Agent (e.g., “Decompose a game project”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `mistral:7b`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 8192
+  - Upper Bound for Max Tokens: 4096
+  - Vision Support: No
+  - Function Call Support: Yes
 
-- **Verify Setup**:
-  ```bash
-  brew --version
-  git --version
-  python3 --version
-  docker --version
-  ```
+### 7. phi3:3.8b
+- **Type**: LLM
+- **Size**: ~2.3 GB
+- **Recommended Specs**: 4GB RAM, CPU, 2.5GB storage, 4096-token context, 2048 max tokens.
+- **Strengths**: Ultra-lightweight, fast for simple tasks.
+- **Use Cases**: Junior Assistant Agent (e.g., “Summarize text”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `phi3:3.8b`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 4096
+  - Upper Bound for Max Tokens: 2048
+  - Vision Support: No
+  - Function Call Support: Yes
 
----
+### 8. bge-small-en-v1.5
+- **Type**: Text Embedding
+- **Size**: ~133 MB
+- **Recommended Specs**: 2GB RAM, CPU, 200MB storage, 512-token context.
+- **Strengths**: Compact, high-quality English embeddings.
+- **Use Cases**: Search Agent (e.g., “Retrieve relevant data”).
+- **Dify Settings**:
+  - Model Type: Text Embedding
+  - Model Name: `bge-small-en-v1.5`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Not applicable
+  - Model Context Size: 512
+  - Upper Bound for Max Tokens: Not applicable
+  - Vision Support: No
+  - Function Call Support: No
 
-## 1. Installing Dify
+### 9. bakllava
+- **Type**: LLM with Vision
+- **Size**: ~4.5 GB
+- **Recommended Specs**: 8GB RAM, M4 Pro GPU, 5GB storage, 4096-token context, 4096 max tokens.
+- **Strengths**: Efficient vision and text processing.
+- **Use Cases**: Visual Analyst Agent (e.g., “Analyze story images”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `bakllava`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 4096
+  - Upper Bound for Max Tokens: 4096
+  - Vision Support: Yes
+  - Function Call Support: No
 
-Dify is deployed via Docker for streamlined management on your Mac Mini M4 Pro.
+### 10. codellama:7b
+- **Type**: LLM for Code Generation
+- **Size**: ~3.8 GB
+- **Recommended Specs**: 8GB RAM, M4 Pro GPU, 4GB storage, 4096-token context, 2048 max tokens.
+- **Strengths**: Specialized for coding tasks.
+- **Use Cases**: Developer Agent (e.g., “Code a Python game”).
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `codellama:7b`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 4096
+  - Upper Bound for Max Tokens: 2048
+  - Vision Support: No
+  - Function Call Support: Yes
 
-### Steps for Dify
-
-1. **Clone Dify Repository**:
-   ```bash
-   git clone https://github.com/langgenius/dify.git
-   cd dify/docker
-   ```
-
-2. **Install Docker Dependencies**:
-   ```bash
-   brew install docker docker-compose
-   ```
-
-3. **Start Dify**:
-   ```bash
-   docker-compose up -d
-   ```
-   - This launches Dify on **port 3000**.
-
-4. **Verify Installation**:
-   - Open a browser and navigate to `http://localhost:3000`.
-   - Sign up and log in to the Dify dashboard.
-   - Check running containers:
-     ```bash
-     docker ps
-     ```
-     - Expected: Containers like `dify-nginx`, `dify-api`, `dify-worker`, `dify-db`.
-
-### Troubleshooting Dify
-
-- **Connection Refused**:
-  - Ensure Docker is running and port 3000 is free:
+### 11. flux.1-dev
+- **Type**: Text-to-Image
+- **Size**: ~12 GB
+- **Recommended Specs**: 16GB RAM (32GB preferred), M4 Pro GPU (Metal via `diffusers`), 15GB storage.
+- **Strengths**: High-quality image generation.
+- **Use Cases**: Creative Agent (e.g., “Illustrate a futuristic city”).
+- **Setup**:
+  - Install `pip` if missing:
     ```bash
-    lsof -i :3000
-    sudo kill -9 <PID>
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python3 get-pip.py
     ```
-  - Check logs:
+  - Install PyTorch nightly (CPU-only, as used):
     ```bash
-    docker logs dify-nginx-1
+    pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu
     ```
+    - Note: For M4 Pro GPU (MPS) support, use:
+      ```bash
+      pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly
+      ```
+      or stable:
+      ```bash
+      pip3 install torch torchvision torchaudio
+      ```
+  - Install `DeepSpeed`:
+    ```bash
+    pip install DeepSpeed
+    ```
+  - Install other dependencies:
+    ```bash
+    pip install --upgrade diffusers transformers torch torchvision torchaudio accelerate fastapi uvicorn protobuf sentencepiece
+    ```
+  - Build `sentencepiece` if needed:
+    ```bash
+    git clone https://github.com/google/sentencepiece.git
+    cd sentencepiece
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    make -j$(gnproc)
+    sudo make install
+    cd ../python
+    pip install .
+    ```
+  - Configure `accelerate`:
+    ```bash
+    accelerate config
+    ```
+    - Select MPS, fp16, 1 GPU.
+  - Update `flux_api.py` with Hugging Face token and run:
+    ```bash
+    python3 flux_api.py
+    ```
+    - Port: 8001
+  - Test:
+    ```bash
+    curl -X POST http://localhost:8001/generate -H "Content-Type: application/json" -d '{"prompt": "A futuristic city at sunset"}'
+    ```
+  - Authenticate: Set `HUGGINGFACE_TOKEN` or add token in script.
+- **Dify Settings**:
+  - Model Type: Custom (Text-to-Image)
+  - Model Name: `flux.1-dev`
+  - Base URL: `http://localhost:8001/generate`
+  - Completion Mode: Not applicable
+  - Model Context Size: Not applicable
+  - Upper Bound for Max Tokens: Not applicable
+  - Vision Support: No
+  - Function Call Support: No
 
-- **PluginDaemonBadRequestError**:
-  - Clear duplicate plugins:
+### 12. whisper-base
+- **Type**: Speech-to-Text
+- **Size**: ~145 MB
+- **Recommended Specs**: 4GB RAM, CPU, 200MB storage.
+- **Strengths**: Accurate speech transcription, optimized for Apple Silicon.
+- **Use Cases**: Voice Input Agent (e.g., “Transcribe user commands”).
+- **Setup**:
+  - Install:
+    ```bash
+    git clone https://github.com/ggerganov/whisper.cpp.git
+    cd whisper.cpp
+    make
+    ./models/download-ggml-model.sh base
+    ```
+  - Run API:
+    ```bash
+    python whisper_api.py
+    ```
+    - Port: 8002
+- **Dify Settings**:
+  - Model Type: Custom (Speech-to-Text)
+  - Model Name: `whisper-base`
+  - Base URL: `http://localhost:8002/transcribe`
+  - Completion Mode: Not applicable
+  - Model Context Size: Not applicable
+  - Upper Bound for Max Tokens: Not applicable
+  - Vision Support: No
+  - Function Call Support: No
+
+### 13. piper-tts
+- **Type**: Text-to-Speech
+- **Size**: ~100 MB
+- **Recommended Specs**: 2GB RAM, CPU, 150MB storage.
+- **Strengths**: Natural-sounding speech, lightweight.
+- **Use Cases**: Voice Output Agent (e.g., “Narrate a story”).
+- **Setup**:
+  - Install:
+    ```bash
+    git clone https://github.com/rhasspy/piper.git
+    cd piper
+    pip install -r requirements.txt
+    wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en_US/en_US-lessac-medium.onnx
+    wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en_US/en_US-lessac-medium.onnx.json
+    ```
+  - Run API:
+    ```bash
+    python piper_api.py
+    ```
+    - Port: 8003
+- **Dify Settings**:
+  - Model Type: Custom (Text-to-Speech)
+  - Model Name: `piper-tts`
+  - Base URL: `http://localhost:8003/synthesize`
+  - Completion Mode: Not applicable
+  - Model Context Size: Not applicable
+  - Upper Bound for Max Tokens: Not applicable
+  - Vision Support: No
+  - Function Call Support: No
+
+### 14. borch/llama3_speed_chat
+- **Type**: LLM
+- **Size**: ~4.5 GB
+- **Recommended Specs**: 8GB RAM, M4 Pro GPU, 5GB storage, 4096-token context, 2048 max tokens.
+- **Strengths**: Fast, conversational responses, optimized for speech-to-text input, supports function calling.
+- **Use Cases**: Conversational Agent (e.g., “Quick chat responses”), pairs with `whisper-base` and `piper-tts`.
+- **Cantonese Support**: Limited; test with Cantonese prompts (e.g., “用廣東話講個笑話”).
+- **Setup**:
+  - Install:
+    ```bash
+    ollama pull borch/llama3_speed_chat
+    ```
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `borch/llama3_speed_chat`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 4096
+  - Upper Bound for Max Tokens: 2048
+  - Vision Support: No
+  - Function Call Support: Yes
+
+### 15. wangshenzhi/llama3-8b-chinese-chat
+- **Type**: LLM
+- **Size**: ~4.5 GB
+- **Recommended Specs**: 8GB RAM, M4 Pro GPU, 5GB storage, 8192-token context, 4096 max tokens.
+- **Strengths**: Fine-tuned for Chinese (Mandarin, likely better for Cantonese), supports roleplay and tools.
+- **Use Cases**: Conversational Agent for Chinese/Cantonese (e.g., “Write about Hong Kong culture”).
+- **Setup**:
+  - Install:
+    ```bash
+    ollama pull wangshenzhi/llama3-8b-chinese-chat
+    ```
+- **Dify Settings**:
+  - Model Type: LLM
+  - Model Name: `wangshenzhi/llama3-8b-chinese-chat`
+  - Base URL: `http://host.docker.internal:11434`
+  - Completion Mode: Chat
+  - Model Context Size: 8192
+  - Upper Bound for Max Tokens: 4096
+  - Vision Support: No
+  - Function Call Support: Yes
+
+## Multi-Agent System Example
+- **Workflow**: Cantonese storytelling app.
+  - **Voice Input** (`whisper-base`): Transcribes Cantonese voice (e.g., “講一個香港故事”).
+  - **Conversational Agent** (`wangshenzhi/llama3-8b-chinese-chat` or `borch/llama3_speed_chat`): Generates story in Cantonese.
+  - **Narrator** (`gemma2:latest`): Adds English translation if needed.
+  - **Visual Analyst** (`llava:latest`, `bakllava`): Describes story-related images.
+  - **Image Creator** (`flux.1-dev`): Generates visuals.
+  - **Coder** (`codellama:7b`): Codes an interactive story app.
+  - **Searcher** (`nomic-embed-text:latest`, `bge-small-en-v1.5`): Retrieves cultural references.
+  - **Planner** (`mistral:7b`): Coordinates tasks.
+  - **Reasoner** (`qwen2.5:14b`): Refines story logic.
+  - **Assistant** (`phi3:3.8b`, `llama3.2:latest`): Handles queries.
+  - **Voice Output** (`piper-tts`): Narrates story in English or Mandarin (Cantonese TTS may require external API).
+
+## Integration Notes
+- **Ollama**:
+  - Install: `ollama pull borch/llama3_speed_chat`, `ollama pull wangshenzhi/llama3-8b-chinese-chat`
+  - Verify: `ollama list`
+  - Run: `ollama serve`
+- **Custom APIs**:
+  - `flux.1-dev`: Run `flux_api.py` (port 8001).
+  - `whisper-base`: Run `whisper_api.py` (port 8002).
+  - `piper-tts`: Run `piper_api.py` (port 8003).
+- **Dify**:
+  - Update `config.yaml` as above.
+  - Restart:
+    ```bash
+    cd ~/dify/docker
+    docker-compose down
+    docker-compose up -d
+    ```
+- **Plugin Error Handling**:
+  - Clear duplicates:
     ```bash
     rm -rf ~/dify/docker/plugins/yourusername_plugin-name
     docker exec dify-db-1 psql -U postgres -d dify -c "DELETE FROM plugins;"
     ```
-  - Waive signature verification:
+  - Waive verification:
     ```bash
     echo "FORCE_VERIFYING_SIGNATURE=false" >> ~/dify/docker/.env
-    docker-compose restart
     ```
+  - Restart Dify.
 
----
-
-## 2. Installing and Setting Up Ngrok
-
-Ngrok creates a public URL (e.g., `https://abc123.ngrok.io`) to expose your local Dify server (`http://192.168.50.122:3000`) for external access from your phone.
-
-### Steps for Ngrok
-
-1. **Install Ngrok**:
-   ```bash
-   brew install ngrok/ngrok/ngrok
-   ```
-   - Verify:
-     ```bash
-     ngrok version
-     ```
-
-2. **Authenticate Ngrok**:
-   - Obtain your authtoken from [Ngrok Dashboard](https://dashboard.ngrok.com).
-   - Run:
-     ```bash
-     ngrok config add-authtoken <your-authtoken>
-     ```
-   - Verify configuration:
-     ```bash
-     cat ~/.ngrok2/ngrok.yml
-     ```
-     - Look for `authtoken: <your-authtoken>`.
-
-3. **Run Ngrok**:
-   ```bash
-   ngrok http 3000
-   ```
-   - Note the forwarding URL (e.g., `https://abc123.ngrok.io`).
-
-4. **Access Dify Externally**:
-   - On your phone (mobile data or different Wi-Fi), open:
-     ```text
-     https://abc123.ngrok.io/apps
-     ```
-
-5. **Stop Ngrok**:
-   - Press `Ctrl+C` in the terminal.
-
-### Troubleshooting Ngrok
-
-- **Command Not Found**:
-  - Ensure Ngrok is in PATH:
+## External Access Setup
+- **Ngrok** (Primary Method):
+  - **Setup**:
+    - Verify authtoken: `cat "/Users/dominicyu/Library/Application Support/ngrok/ngrok.yml"`
+    - Run: `ngrok http 3000`
+    - Access: `https://<ngrok-url>/apps` (e.g., `https://abc123.ngrok.io/apps`)
+  - **Security**: Use HTTPS, enable Dify authentication (**Settings** > **Security**).
+  - **Limitations**: Free URLs are temporary; paid plans offer static domains.
+- **Same Wi-Fi**:
+  - Access: `http://192.168.50.122:3000/apps`
+  - Firewall:
     ```bash
-    echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc
-    source ~/.zshrc
+    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /usr/local/bin/docker
     ```
+- **External (Mobile Data)**:
+  - **VPN** (Recommended):
+    - Install Tailscale:
+      ```bash
+      brew install tailscale
+      tailscale up
+      ```
+    - Connect phone to Tailscale network.
+    - Access: `http://192.168.50.122:3000/apps`
+  - **Port Forwarding**:
+    - Router: Forward port 3000 to `192.168.50.122:3000` (TCP).
+    - Public IP: `curl ifconfig.me` (e.g., `203.0.113.1`).
+    - Access: `http://203.0.113.1:3000/apps`
+    - DDNS: Use DuckDNS (`yourdify.duckdns.org`) for dynamic IP.
+  - **Reverse Proxy with HTTPS**:
+    - Install Caddy:
+      ```bash
+      brew install caddy
+      ```
+    - Create Caddyfile:
+      ```bash
+      echo "yourdify.duckdns.org { reverse_proxy http://192.168.50.122:3000; tls your.email@example.com }" > ~/Caddyfile
+      caddy run --config ~/Caddyfile
+      ```
+    - Forward router port 443 to Mac’s port 80.
+    - Access: `https://yourdify.duckdns.org/apps`
 
-- **Tunnel Limit**:
-  - Free Ngrok accounts have session limits. Upgrade for static URLs or use:
+## Organizing Documentation in Dify
+- **Knowledge Base**:
+  - Create: **Knowledge** > **Create Knowledge Base** > Name: `Model Documentation`.
+  - Upload: Save this content as `model_documentation.md` and upload.
+  - Embedding Model: `nomic-embed-text:latest`.
+  - Tags: `LLM`, `Vision`, `Embedding`, `Text-to-Image`, `Code`, `Speech-to-Text`, `Text-to-Speech`, `Cantonese`, `Ngrok`.
+- **Workflow**: Create a query workflow:
+  - Input: Query (e.g., “How to set up FLUX.1-dev?”).
+  - Search: `bge-small-en-v1.5` retrieves sections.
+  - Summarizer: `phi3:3.8b` summarizes results.
+  - Output: Returns response.
+- **Version Control**: Host in Git (e.g., `https://github.com/yourusername/dify-docs`).
+- **Access Control**: Restrict to team members in Dify’s permissions settings.
+
+## Testing Recommendations
+- **MPS Usage** (if using MPS-enabled PyTorch)**:
+  - Verify:
     ```bash
-    ngrok http --domain=your-dify.ngrok.io 3000
+    python3 -c "import torch; print('MPS available:', torch.backends.mps.is_available()); print('PyTorch version:', torch.__version__)"
     ```
-
-- **Connection Issues**:
-  - Test local Dify:
+  - Monitor GPU usage in Activity Monitor during generation.
+- **Flux.1 API**:
+  - Run:
     ```bash
-    curl http://localhost:3000
+    python3 ~/flux_api.py
     ```
-  - Check firewall:
-    ```bash
-    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /usr/local/bin/ngrok
-    ```
-
----
-
-## 3. Installing and Setting Up Ollama Models
-
-Ollama hosts AI models for your multi-agent system. Install Ollama first if not done:
-
-```bash
-brew install ollama
-ollama serve
-```
-
-### Ollama Installation
-
-- **Verify**:
-  ```bash
-  ollama version
-  ```
-- **Start**:
-  ```bash
-  ollama serve
-  ```
-- **Test**:
-  ```bash
-  curl http://localhost:11434
-  ```
-
-### Model Details
-
-Below is a table of installed models, their installation commands, sizes, and use cases:
-
-| Model Name                        | Type         | Size    | Install Command                           | Use Case                     |
-|-----------------------------------|--------------|---------|-------------------------------------------|------------------------------|
-| `llava:latest`                    | Vision LLM   | ~4.7 GB | `ollama pull llava:latest`                | Image description            |
-| `gemma2:latest`                   | LLM          | ~5.4 GB | `ollama pull gemma2:latest`               | Conversational reasoning     |
-| `nomic-embed-text:latest`         | Embedding    | ~274 MB | `ollama pull nomic-embed-text:latest`     | Semantic search              |
-| `llama3.2:latest`                 | LLM          | ~2.0 GB | `ollama pull llama3.2:latest`             | Function calling             |
-| `qwen2.5:14b`                     | LLM          | ~9.0 GB | `ollama pull qwen2.5:14b`                 | Advanced reasoning           |
-| `mistral:7b`                      | LLM          | ~4.1 GB | `ollama pull mistral:7b`                  | Task planning                |
-| `phi3:3.8b`                       | LLM          | ~2.3 GB | `ollama pull phi3:3.8b`                   | Quick tasks                  |
-| `bge-small-en-v1.5`               | Embedding    | ~133 MB | `ollama pull bge-small-en-v1.5`           | Reranking                    |
-| `bakllava`                        | Vision LLM   | ~4.5 GB | `ollama pull bakllava`                    | Image analysis               |
-| `codellama:7b`                    | Code LLM     | ~3.8 GB | `ollama pull codellama:7b`                | Code generation              |
-| `borch/llama3_speed_chat`         | LLM          | ~4.5 GB | `ollama pull borch/llama3_speed_chat`     | Conversational tasks         |
-| `wangshenzhi/llama3-8b-chinese-chat` | LLM       | ~4.5 GB | `ollama pull wangshenzhi/llama3-8b-chinese-chat` | Cantonese/Chinese support |
-
-### Setup and Testing
-- **For Each Model**:
-  - Install with `ollama pull <model-name>`.
   - Test:
     ```bash
-    ollama run <model-name> "Hello, test the model."
+    curl -X POST http://localhost:8001/generate -H "Content-Type: application/json" -d '{"prompt": "A futuristic city at sunset"}'
     ```
-    - Example: `ollama run llava:latest "Describe this image."` (with an image).
-- **Dify Integration**:
-  - Add models in **Settings** > **Model Providers** > **Ollama**.
-  - Example settings for `qwen2.5:14b`:
-    - Model Type: LLM
-    - Model Name: `qwen2.5:14b`
-    - Base URL: `http://host.docker.internal:11434`
-    - Completion Mode: Chat
-    - Model Context Size: 32768
-    - Upper Bound for Max Tokens: 4096
-    - Vision Support: No
-    - Function Call Support: Yes
-
----
-
-## 4. Installing and Setting Up Custom Components
-
-Custom components (`flux.1-dev`, `whisper-base`, `piper-tts`) are not in Ollama and require Python-based APIs for Dify integration.
-
-### flux.1-dev (Text-to-Image)
-
-- **Purpose**: Generates images from text prompts.
-- **Size**: ~12 GB
-- **Install Dependencies**:
-  ```bash
-  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-  python3 get-pip.py
-  pip install torch torchvision torchaudio diffusers transformers accelerate fastapi uvicorn
-  ```
-- **Setup Script**:
-  - Create `flux_api.py`:
-    ```python
-    # artifact_id: 3b8e5c1d-7f2a-4c9b-9e8f-6a2b3d4e5f6b
-    # title: flux_api.py
-    # contentType: text/python
-    from fastapi import FastAPI
-    from diffusers import FluxPipeline
-    import torch
-    from fastapi.responses import JSONResponse
-    import base64
-    from io import BytesIO
-    from PIL import Image
-
-    app = FastAPI()
-    model_id = "black-forest-labs/FLUX.1-dev"
-    pipe = FluxPipeline.from_pretrained(
-        model_id,
-        torch_dtype=torch.float16,
-        device_map="mps"
-    )
-    pipe.to("mps")
-
-    @app.post("/generate")
-    async def generate_image(prompt: str):
-        try:
-            image = pipe(prompt, num_inference_steps=20).images[0]
-            buffered = BytesIO()
-            image.save(buffered, format="PNG")
-            img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-            return {"status": "success", "image": img_str}
-        except Exception as e:
-            return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
-
-    if __name__ == "__main__":
-        import uvicorn
-        uvicorn.run(app, host="0.0.0.0", port=8001)
-    ```
-- **Run**:
-  ```bash
-  python flux_api.py
-  ```
-  - Port: 8001
-- **Dify Integration**:
-  - Add custom provider:
-    - Model Type: Custom (Text-to-Image)
-    - Model Name: `flux.1-dev`
-    - Base URL: `http://localhost:8001/generate`
-
-### whisper-base (Speech-to-Text)
-
-- **Purpose**: Transcribes audio to text.
-- **Size**: ~145 MB
-- **Install whisper.cpp**:
-  ```bash
-  git clone https://github.com/ggerganov/whisper.cpp.git
-  cd whisper.cpp
-  brew install cmake
-  make
-  ./models/download-ggml-model.sh base
-  ```
-- **Setup Script**:
-  - Create `whisper_api.py`:
-    ```python
-    # artifact_id: 8c9f2e4d-5a3b-4d8c-9e7f-7b3c4e5f6a7c
-    # title: whisper_api.py
-    # contentType: text/python
-    from fastapi import FastAPI, UploadFile
-    from fastapi.responses import JSONResponse
-    import subprocess
-    import os
-    import tempfile
-
-    app = FastAPI()
-
-    @app.post("/transcribe")
-    async def transcribe_audio(file: UploadFile):
-        try:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_file:
-                temp_file.write(await file.read())
-                temp_path = temp_file.name
-            result = subprocess.run(
-                ["./main", "-m", "models/ggml-base.bin", "-f", temp_path, "-t", "8"],
-                cwd=os.path.expanduser("~/whisper.cpp"),
-                capture_output=True,
-                text=True
-            )
-            os.remove(temp_path)
-            if result.returncode != 0:
-                raise Exception(result.stderr)
-            return {"status": "success", "text": result.stdout.strip()}
-        except Exception as e:
-            return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
-
-    if __name__ == "__main__":
-        import uvicorn
-        uvicorn.run(app, host="0.0.0.0", port=8002)
-    ```
-- **Run**:
-  ```bash
-  python whisper_api.py
-  ```
-  - Port: 8002
-- **Dify Integration**:
-  - Add custom provider:
-    - Model Type: Custom (Speech-to-Text)
-    - Model Name: `whisper-base`
-    - Base URL: `http://localhost:8002/transcribe`
-
-### piper-tts (Text-to-Speech)
-
-- **Purpose**: Converts text to speech.
-- **Size**: ~100 MB
-- **Install**:
-  ```bash
-  git clone https://github.com/rhasspy/piper.git
-  cd piper
-  pip install -r requirements.txt
-  wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en_US/en_US-lessac-medium.onnx
-  wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en_US/en_US-lessac-medium.onnx.json
-  ```
-- **Setup Script**:
-  - Create `piper_api.py`:
-    ```python
-    # artifact_id: 9d0f3f5e-6b4c-4e9d-af8g-8c4d5f6g7b8d
-    # title: piper_api.py
-    # contentType: text/python
-    from fastapi import FastAPI
-    from piper import PiperVoice
-    from fastapi.responses import StreamingResponse
-    import io
-
-    app = FastAPI()
-    voice = PiperVoice.load("en_US-lessac-medium.onnx")
-
-    @app.post("/synthesize")
-    async def synthesize_text(text: str):
-        try:
-            audio = voice.synthesize(text)
-            return StreamingResponse(io.BytesIO(audio), media_type="audio/wav")
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
-
-    if __name__ == "__main__":
-        import uvicorn
-        uvicorn.run(app, host="0.0.0.0", port=8003)
-    ```
-- **Run**:
-  ```bash
-  python piper_api.py
-  ```
-  - Port: 8003
-- **Dify Integration**:
-  - Add custom provider:
-    - Model Type: Custom (Text-to-Speech)
-    - Model Name: `piper-tts`
-    - Base URL: `http://localhost:8003/synthesize`
-
----
-
-## 5. Running All Components
-
-Start all components to ensure the multi-agent system is operational:
-
-| Component        | Command                        | Port   |
-|------------------|--------------------------------|--------|
-| **Ollama**       | `ollama serve`                 | 11434  |
-| **Dify**         | `cd ~/dify/docker && docker-compose up -d` | 3000 |
-| **flux.1-dev**   | `python flux_api.py`           | 8001   |
-| **whisper-base** | `python whisper_api.py`        | 8002   |
-| **piper-tts**    | `python piper_api.py`          | 8003   |
-| **Ngrok**        | `ngrok http 3000`              | Dynamic |
-
-- **Stop Commands**:
-  - APIs: `Ctrl+C` in terminal.
-  - Dify: `cd ~/dify/docker && docker-compose down`
-
----
-
-## 6. Organizing Documentation
-
-To ensure accessibility and maintainability, organize this documentation in Dify’s Knowledge Base or a Git repository:
-
-1. **Dify Knowledge Base**:
-   - **Create**: In Dify, go to **Knowledge** > **Create Knowledge Base**.
-   - **Name**: `Dify Setup Documentation`
-   - **Embedding Model**: `nomic-embed-text:latest`
-   - **Upload**: Save this content as `dify_setup.md` and upload:
-     ```bash
-     echo "# Dify Installation and Setup Documentation..." > ~/dify_setup.md
-     ```
-   - **Tags**: `Installation`, `Ollama`, `Ngrok`, `Custom Components`, `Multi-Agent`
-
-2. **Sub-Documents**:
-   - Split into:
-     - `dify_installation.md`: Dify setup steps.
-     - `ngrok_setup.md`: Ngrok installation and configuration.
-     - `ollama_models.md`: Ollama model details.
-     - `custom_components.md`: flux.1-dev, whisper-base, piper-tts.
-
-3. **Search Workflow**:
-   - Create a Dify workflow to query the Knowledge Base:
-     - **Input Node**: Query (e.g., “How to install Ngrok?”).
-     - **Search Node**: Use `bge-small-en-v1.5` for retrieval.
-     - **Summarizer Node**: Use `phi3:3.8b` to summarize.
-     - **Output Node**: Return results.
-
-4. **Git Repository**:
-   - Host on GitHub for version control:
-     ```bash
-     mkdir ~/dify-setup-docs
-     cd ~/dify-setup-docs
-     git init
-     cp ~/dify_setup.md .
-     git add dify_setup.md
-     git commit -m "Initial Dify setup documentation"
-     git remote add origin https://github.com/yourusername/dify-setup-docs.git
-     git push -u origin main
-     ```
-   - **Versioning**: Tag releases:
-     ```bash
-     git tag v1.0
-     git push origin v1.0
-     ```
-
-5. **Access Control**:
-   - In Dify, restrict Knowledge Base access to your team via **Settings** > **Permissions**.
-
----
-
-## 7. Testing and Validation
-
-Ensure all components work as expected:
-
-- **Dify**:
-  - Test: `curl http://localhost:3000/apps`
-  - Verify: Dify dashboard loads at `http://192.168.50.122:3000`.
-
-- **Ngrok**:
-  - Test: Access `https://abc123.ngrok.io/apps` on phone (mobile data).
-  - Verify: App list loads.
-
-- **Ollama Models**:
-  - Test: `ollama run llava:latest "Hello"`
-  - Verify: Model responds (e.g., image description for `llava`).
-
-- **Custom Components**:
-  - Test APIs:
+  - Verify: Image generated (faster with MPS; slower with CPU-only PyTorch).
+- **Dify Workflow**:
+  - Test: Workflow with `flux.1-dev` node (prompt: “A serene mountain landscape”).
+  - Verify: Image generated.
+- **External Access**:
+  - Run:
     ```bash
-    curl http://localhost:8001/generate -d '{"prompt": "A futuristic city"}'
-    curl -X POST http://localhost:8002/transcribe -F "file=@~/whisper.cpp/samples/jfk.wav"
-    curl -X POST http://localhost:8003/synthesize -d '{"text": "Test narration"}'
+    ngrok http 3000
     ```
+  - Access: `https://<ngrok-url>/apps` on phone.
+  - Test workflow remotely.
+- **Cantonese Testing**:
+  - Test:
+    ```bash
+    ollama run wangshenzhi/llama3-8b-chinese-chat "用廣東話講一個笑話"
+    ```
+  - Compare with `borch/llama3_speed_chat`.
+- **Performance**:
+  - Monitor RAM/GPU in Activity Monitor (~40GB total model size).
+  - Use lighter models (e.g., `phi3:3.8b`) if 16GB RAM is strained.
 
-- **Organization**:
-  - Upload to Knowledge Base and query: “How to install Ollama models?”
-  - Verify: Relevant sections retrieved.
-
----
-
-## 8. Troubleshooting
-
-| Issue                       | Solution                                                                 |
-|-----------------------------|--------------------------------------------------------------------------|
-| **Dify Connection Refused** | Check Docker: `docker ps` <br> Free port 3000: `lsof -i :3000 && sudo kill -9 <PID>` <br> Logs: `docker logs dify-nginx-1` |
-| **Ngrok Command Not Found** | Ensure PATH: `echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.zshrc` <br> Reinstall: `brew install ngrok/ngrok/ngrok` |
-| **Ollama Not Responding**   | Run: `ollama serve` <br> Test: `curl http://localhost:11434`             |
-| **Custom API Errors**       | Test: `curl http://localhost:8003/synthesize -d '{"text": "Test"}'` <br> Check logs or restart API |
-| **PluginDaemonBadRequestError** | Clear: `rm -rf ~/dify/docker/plugins/yourusername_plugin-name` <br> Waive: `echo "FORCE_VERIFYING_SIGNATURE=false" >> ~/dify/docker/.env` <br> Restart: `docker-compose restart` |
-| **External Access Fails**   | Test local: `curl http://192.168.50.122:3000` <br> Firewall: `sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add /usr/local/bin/docker` |
-
----
-
-## Why This Layout?
-- **Consistent Headings**: Clear hierarchy with `#`, `##`, `###` for easy navigation.
-- **Tables**: Summarize model details and troubleshooting for quick reference.
-- **Code Blocks**: Highlight commands and scripts for clarity.
-- **Bullet Points**: Break down prerequisites and steps for readability.
-- **Table of Contents**: Enables quick access to sections.
-- **Organized Sections**: Separates Dify, Ngrok, Ollama, and custom components for clarity.
-
-This enhanced Markdown is ready for Dify’s Knowledge Base or GitHub, ensuring accessibility and maintainability for your multi-agent system setup.
+## Troubleshooting
+- **MPS Not Available** (if using MPS-enabled PyTorch):
+  - Check PyTorch version:
+    ```bash
+    python3 -c "import torch; print(torch.__version__)"
+    ```
+  - Reinstall:
+    ```bash
+    pip3 install torch torchvision torchaudio
+    ```
+  - Ensure macOS Sequoia and M4 Pro compatibility.
+- **Slow Generation**:
+  - Check logs:
+    ```bash
+    tail -f flux_api.log
+    ```
+  - Verify MPS (if enabled):
+    ```bash
+    python3 -c "import torch; print(torch.backends.mps.is_available())"
+    ```
+  - Adjust `num_inference_steps` (e.g., 10) or resolution (`height=256`, `width=256`) in `flux_api.py`.
+- **Sentencepiece**:
+  - Verify:
+    ```bash
+    python3 -c "import sentencepiece; print(sentencepiece.__version__)"
+    ```
+  - Rebuild:
+    ```bash
+    git clone https://github.com/google/sentencepiece.git
+    cd sentencepiece
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    make -j$(gnproc)
+    sudo make install
+    cd ../python
+    pip install .
+    ```
+- **DeepSpeed**:
+  - Verify:
+    ```bash
+    python3 -c "import deepspeed; print(deepspeed.__version__)"
+    ```
+  - Reinstall:
+    ```bash
+    pip install DeepSpeed
+    ```
+- **Dify Integration**:
+  - Check logs:
+    ```bash
+    docker logs dify-api-1
+    ```
+- **Plugin Errors**:
+  - Check logs:
+    ```bash
+    docker logs dify-plugin-daemon-1
+    ```
+  - Clear:
+    ```bash
+    rm -rf ~/dify/docker/plugins/yourusername_plugin-name
+    docker exec dify-db-1 psql -U postgres -d dify -c "DELETE FROM plugins;"
+    ```
+- **Ngrok Access**:
+  - Verify:
+    ```bash
+    ngrok config check
+    ```
+  - Test:
+    ```bash
+    curl http://localhost:3000/apps
+    ```
